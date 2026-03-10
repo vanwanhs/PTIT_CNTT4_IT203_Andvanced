@@ -5,8 +5,6 @@ public class Main {
     public static void main(String[] args) {
 
         User user = new User("Nguyen Van Anh", "123456", "ADMIN");
-
-        // Method Reference tới static method
         UserProcessor processor = UserUtils::convertToUpperCase;
 
         String result = processor.process(user);
