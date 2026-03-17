@@ -1,6 +1,4 @@
 package lesson6;
-import factory.*;
-import service.OrderService;
 
 import java.util.Scanner;
 
