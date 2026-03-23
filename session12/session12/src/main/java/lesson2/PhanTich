@@ -1,0 +1,31 @@
+Vấn đề khi dùng Statement
+Ví dụ code sai:
+String sql = "UPDATE patients SET temperature = " + temp;
+ Nếu bạn nhập:
+37,5   (theo máy VN / Pháp)
+ SQL nhận:
+UPDATE patients SET temperature = 37,5
+ Sai cú pháp SQL
+(vì SQL chỉ chấp nhận dấu chấm ., không phải dấu phẩy ,)
+ Nguyên nhân gốc
+Java khi nối chuỗi:
+double → chuyển thành String theo Locale hệ điều hành
+nên:
+Locale	Kết quả
+US	37.5
+VN/FR	37,5
+ Tại sao setDouble() giải quyết được?
+ps.setDouble(1, temperature);
+
+Lúc này:
+
+Java KHÔNG nối chuỗi SQL nữa
+Dữ liệu được gửi xuống DB dưới dạng binary (số thật)
+ Cơ chế thật sự
+PreparedStatement:
+- SQL: UPDATE ... SET temperature = ?
+- dữ liệu: gửi riêng
+ DB sẽ tự hiểu:
+37.5 (chuẩn quốc tế)
+KẾT LUẬN
+Các phương thức setDouble(), setInt() của PreparedStatement giúp truyền dữ liệu dưới dạng kiểu nguyê

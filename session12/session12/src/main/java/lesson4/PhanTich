@@ -1,0 +1,31 @@
+-> Khi sử dụng Statement trong vòng lặp để thực thi 1000 câu lệnh INSERT:
+
+Mỗi lần lặp, Database phải:
+Parse (phân tích cú pháp SQL)
+Tạo Execution Plan
+Thực thi
+
+-> Điều này gây lãng phí tài nguyên vì:
+
+Cùng một cấu trúc SQL nhưng bị xử lý lại 1000 lần
+
+-> Hậu quả:
+
+Tăng tải CPU Database Server
+Tốn bộ nhớ
+Giảm hiệu năng hệ thống
+
+->Khi dùng PreparedStatement:
+
+SQL được biên dịch trước (pre-compiled)
+Database chỉ parse và tạo execution plan 1 lần duy nhất
+
+-> Sau đó chỉ thay đổi tham số và thực thi nhiều lần
+
+-> Kết luận:
+
+PreparedStatement giúp giảm số lần parse và lập execution plan → tăng tốc độ đáng kể.
+
+Như vậy ta có PreparedStatement giúp tối ưu hiệu năng bằng cách giảm số lần phân tích và lập kế hoạch thực thi.
+              Batch Processing tiếp tục tối ưu bằng cách giảm số lần giao tiếp với Database.
+              Do đó, PreparedStatement kết hợp Batch là giải pháp hiệu quả nhất khi xử lý dữ liệu lớn.

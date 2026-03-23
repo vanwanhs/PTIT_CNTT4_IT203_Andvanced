@@ -1,0 +1,66 @@
+Vì sao xảy ra SQL Injection?
+
+Khi sử dụng Statement và nối chuỗi trực tiếp từ dữ liệu người dùng:
+
+String sql = "SELECT * FROM doctors WHERE doctor_code = '"
+           + code + "' AND doctor_pass = '" + pass + "'";
+
+Nếu người dùng nhập mật khẩu:
+
+' OR '1'='1
+
+Câu SQL sẽ trở thành:
+
+SELECT * FROM doctors
+WHERE doctor_code = 'abc' AND doctor_pass = '' OR '1'='1'
+
+Biểu thức '1'='1' luôn đúng nên toàn bộ điều kiện WHERE luôn đúng, dẫn đến đăng nhậ
+p thành công dù không đúng mật khẩu. Đây chính là SQL Injection.
+
+Vì sao PreparedStatement là “tấm khiên”?
+
+PreparedStatement không nối chuỗi SQL với dữ liệu người dùng. Thay vào đó, nó tách:
+
+Câu lệnh SQL (cấu trúc)
+Dữ liệu đầu vào (tham số)
+
+Ví dụ:
+
+String sql = "SELECT * FROM doctors WHERE doctor_code = ? AND doctor_pass = ?";
+PreparedStatement ps = connection.prepareStatement(sql);
+
+ps.setString(1, code);
+ps.setString(2, pass);
+
+Khi đó:
+
+SQL đã cố định: doctor_code = ? AND doctor_pass = ?
+Dữ liệu người dùng được truyền riêng biệt
+
+Nếu người dùng nhập ' OR '1'='1, nó sẽ được coi là một chuỗi bình thường, không phải
+ là một phần của câu lệnh SQL. Database sẽ tìm đúng chuỗi đó, không thể phá vỡ cấu trúc truy vấn.
+
+Cơ chế “Pre-compiled” giúp gì?
+
+PreparedStatement hoạt động theo 2 bước:
+
+Bước 1: Biên dịch trước (pre-compile)
+
+Câu SQL với dấu ? được gửi xuống Database
+Database phân tích cú pháp và tạo execution plan
+Lúc này chưa có dữ liệu người dùng
+
+Bước 2: Gán tham số và thực thi
+
+Các giá trị được truyền vào các vị trí ?
+Dữ liệu được xử lý như giá trị thuần, không phải mã SQL
+
+Điều quan trọng là:
+
+Cấu trúc SQL đã được cố định từ trước
+Người dùng không thể chèn thêm điều kiện như OR, AND, UNION…
+
+Kết luận
+PreparedStatement được coi là “tấm khiên” chống SQL Injection vì nó tách biệt hoàn toàn câu lệnh SQL và dữ
+ liệu đầu vào. Cơ chế biên dịch trước giúp cố định cấu trúc truy vấn, đảm bảo mọi dữ liệu người dùng chỉ được
+ xử lý như giá trị, không thể thay đổi logic của câu lệnh SQL.

@@ -1,0 +1,57 @@
+1. Vì sao phải gọi registerOutParameter() trước khi execute()?
+ Vì JDBC không tự biết tham số nào là OUT
+
+ Cơ chế thật sự bên trong
+
+Khi bạn gọi Stored Procedure:
+
+CALL GET_SURGERY_FEE(?, ?)
+
+ JDBC chỉ thấy:
+
+2 tham số ? ?
+ Nó KHÔNG biết:
+
+cái nào là IN
+cái nào là OUT
+kiểu dữ liệu là gì
+ Vì vậy bạn phải khai báo trước
+cstmt.registerOutParameter(2, Types.DECIMAL);
+
+nghĩa là:
+
+"Tham số thứ 2 là OUT và kiểu DECIMAL"
+ Nếu KHÔNG làm bước này
+
+JDBC sẽ:
+
+không cấp vùng nhớ để nhận dữ liệu
+không ánh xạ kiểu dữ liệu
+ Kết quả
+The column index is out of range
+
+hoặc
+
+Không lấy được giá trị
+ KẾT LUẬN Ý 1
+JDBC bắt buộc phải gọi registerOutParameter() để xác định tham số OUT và kiểu dữ liệu trước khi thực thi, nếu không sẽ không thể nhận dữ liệu trả về từ Stored Procedure.
+ 2. Nếu SQL là DECIMAL thì Java dùng gì?
+ Đáp án:
+Types.DECIMAL Mapping kiểu dữ liệu
+SQL	Java
+DECIMAL	Types.DECIMAL
+INT	Types.INTEGER
+VARCHAR	Types.VARCHAR Nếu dùng sai kiểu
+
+ví dụ:
+
+Types.VARCHAR
+ sẽ gây: lỗi hoặc dữ liệu sai
+ KẾT LUẬN Ý 2
+Nếu tham số OUT là kiểu DECIMAL trong SQL thì trong Java phải đăng ký bằng Types.DECIMAL để đảm bảo ánh xạ đúng kiểu dữ liệu.
+
+Bạn có thể viết:
+
+JDBC yêu cầu gọi registerOutParameter() trước khi execute() để khai báo tham số đầu ra và kiểu dữ liệu tương ứng. Điều này giúp hệ thống cấp phát bộ nhớ và ánh xạ dữ liệu chính xác khi Stored Procedure trả về kết quả. Nếu không thực hiện bước này, chương trình sẽ không thể lấy được giá trị OUT và có thể gây lỗi như “column index is out of range”.
+
+Nếu kiểu dữ liệu trong SQL là DECIMAL thì trong Java phải sử dụng Types.DECIMAL để đăng ký.
