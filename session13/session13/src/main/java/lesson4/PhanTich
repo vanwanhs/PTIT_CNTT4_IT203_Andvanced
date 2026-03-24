@@ -1,0 +1,32 @@
+1. Phân tích bài toán (I/O)
+- Input:
+- Không cần tham số hoặc có thể truyền tham số lọc (ví dụ: ngày, khoa).
+- Output:
+- List<BenhNhanDTO> trong đó mỗi BenhNhanDTO chứa:
+- Thông tin cơ bản bệnh nhân (maBenhNhan, tenBenhNhan)
+- Danh sách dịch vụ/thuốc (List<DichVu>)
+
+2. Đề xuất giải pháp
+Giải pháp 1: N+1 Query
+- Lấy danh sách bệnh nhân bằng 1 query.
+- Với mỗi bệnh nhân, lại query riêng để lấy dịch vụ.
+- Nhược điểm: 500 bệnh nhân → 501 query, gây quá tải DB.
+- Ưu điểm: Code dễ viết, dễ hiểu.
+Giải pháp 2: JOIN + gom dữ liệu
+- Viết 1 câu SQL JOIN giữa BenhNhan và DichVuSuDung.
+- Lấy toàn bộ dữ liệu trong 1 query.
+- Gom dữ liệu bằng vòng lặp Java.
+- Ưu điểm: Chỉ 1 query, tốc độ nhanh.
+- Khắc phục Bẫy 2: Dùng LEFT JOIN để bệnh nhân chưa có dịch vụ vẫn hiển thị.
+
+3. So sánh & Lựa chọn
+| Tiêu chí |Giải pháp 1 (N+1 Query)  |  Giải pháp 2 (JOIN + gom)|
+|Số lượng query  | 501 |  1|
+| Network I/O |  |  |
+|Độ phức tạp xử lý Java  |  |  |
+|  Nguy cơ bỏ sót bệnh nhân|  |  |
+|  Khắc phục Bẫy 2|  |  |
+| Tốc độ với 500 bệnh nhân |  |  |
+
+
+➡ Chọn Giải pháp 2 (JOIN + gom dữ liệu).

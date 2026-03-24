@@ -1,0 +1,6 @@
+Trong JDBC, mặc định Auto-Commit = true. Nghĩa là:
+- Mỗi câu lệnh SQL (executeUpdate) được thực thi sẽ tự động commit ngay lập tức vào cơ sở dữ liệu.
+- Khi bạn chạy UPDATE Medicine_Inventory ..., thay đổi đã được lưu vĩnh viễn vào DB.
+- Sau đó, nếu xảy ra lỗi (ví dụ int x = 10/0), chương trình nhảy vào catch và bỏ qua câu lệnh INSERT Prescription_History.
+- Vì Auto-Commit đã bật, thay đổi ở kho thuốc không thể rollback nữa, dẫn đến tình trạng thuốc bị trừ nhưng lịch sử không được ghi.
+➡ Đây là lý do vi phạm nguyên tắc Atomicity: hai thao tác không còn gắn kết thành một giao dịch nguyên vẹn.

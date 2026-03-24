@@ -1,0 +1,23 @@
+Phân tích bài toán (I/O)
+- Input:
+- maBenhNhan (int): mã bệnh nhân cần xuất viện.
+- tienVienPhi (double): số tiền viện phí cần trừ.
+- Output:
+- Thông báo "Xuất viện và thanh toán thành công!" nếu cả 3 bước đều thành công.
+- Thông báo lỗi nếu thất bại, kèm rollback để dữ liệu trở về trạng thái an toàn.
+giải pháp
+- Sử dụng Connection với setAutoCommit(false) để gom 3 thao tác vào cùng một transaction.
+- Nếu bất kỳ bước nào thất bại → rollback().
+- Bẫy 1 (Thiếu tiền): Trước khi trừ tiền, kiểm tra số dư. Nếu số dư < viện phí → ném Exception và rollback.
+- Bẫy 2 (Row Affected = 0): Sau mỗi executeUpdate(), kiểm tra số dòng bị ảnh hưởng. Nếu = 0 → ném Exception và rollback.
+
+Thiết kế các bước
+- Mở kết nối DB.
+- Tắt auto-commit.
+- Lấy số dư bệnh nhân. Kiểm tra Bẫy 1.
+- Trừ tiền viện phí. Kiểm tra Row Affected.
+- Giải phóng giường bệnh. Kiểm tra Row Affected.
+- Cập nhật trạng thái bệnh nhân. Kiểm tra Row Affected.
+- Nếu tất cả thành công → commit.
+- Nếu bất kỳ lỗi nào → rollback.
+- Đóng kết nối.

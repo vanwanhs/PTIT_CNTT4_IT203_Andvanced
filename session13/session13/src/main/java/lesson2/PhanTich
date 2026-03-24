@@ -1,0 +1,10 @@
+Phần 1 – Phân tích
+Trong đoạn code lỗi, lập trình viên đã biết cách tắt Auto-Commit và chỉ commit khi cả hai thao tác thành công.
+Tuy nhiên, khi xảy ra lỗi ở bước 2 (ví dụ sai tên bảng),
+chương trình chỉ in ra thông báo bằng System.out.println() mà không rollback.
+Điều này vi phạm nguyên tắc của Transaction vì:
+- Transaction phải đảm bảo Atomicity: hoặc tất cả cùng thành công, hoặc tất cả cùng thất bại.
+- Nếu chỉ in lỗi mà không rollback, dữ liệu đang nằm trong trạng thái “treo” (chưa commit, chưa rollback).
+ Kết nối giữ transaction mở, gây lãng phí tài nguyên và có thể khóa bảng, ảnh hưởng đến các thao tác khác.
+- Hành động thiết yếu bị bỏ quên chính là conn.rollback() để khôi phục cơ sở dữ
+liệu về trạng thái an toàn trước khi lỗi xảy ra.
